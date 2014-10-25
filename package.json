@@ -21,8 +21,12 @@
   "homepage": "https://github.com/ahmednuaman/battleships-server",
   "devDependencies": {
     "expect.js": "^0.3.1",
-    "mocha": "^2.0.1",
-    "mongodb": "^1.4.19",
+    "mocha": "^2.0.1"
+  },
+  "dependencies": {
+    "lodash": "^2.4.1",
+    "mongoose": "^3.8.18",
+    "q": "^1.0.1",
     "socket.io": "^1.1.0"
   }
 }
