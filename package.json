@@ -18,5 +18,11 @@
   "bugs": {
     "url": "https://github.com/ahmednuaman/battleships-server/issues"
   },
-  "homepage": "https://github.com/ahmednuaman/battleships-server"
+  "homepage": "https://github.com/ahmednuaman/battleships-server",
+  "devDependencies": {
+    "expect.js": "^0.3.1",
+    "mocha": "^2.0.1",
+    "mongodb": "^1.4.19",
+    "socket.io": "^1.1.0"
+  }
 }
