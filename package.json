@@ -1,0 +1,22 @@
+{
+  "name": "battleships-server",
+  "version": "0.0.1",
+  "description": "A simple battleships server written in NodeJS and MongoDB",
+  "main": "server.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ahmednuaman/battleships-server.git"
+  },
+  "keywords": [
+    "battleships"
+  ],
+  "author": "Ahmed Nuaman (ahmed@ahmednuaman.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ahmednuaman/battleships-server/issues"
+  },
+  "homepage": "https://github.com/ahmednuaman/battleships-server"
+}
