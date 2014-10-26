@@ -4,7 +4,7 @@
   "description": "A simple battleships server written in NodeJS and MongoDB",
   "main": "server.js",
   "scripts": {
-    "test": "mocha -R nyan test/**/*.test.js"
+    "test": "istanbul cover _mocha -- test/**/*.test.js"
   },
   "repository": {
     "type": "git",
@@ -21,6 +21,7 @@
   "homepage": "https://github.com/ahmednuaman/battleships-server",
   "devDependencies": {
     "expect.js": "^0.3.1",
+    "istanbul": "^0.3.2",
     "mocha": "^2.0.1",
     "mockgoose": "^1.10.7"
   },
