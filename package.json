@@ -4,7 +4,7 @@
   "description": "A simple battleships server written in NodeJS and MongoDB",
   "main": "server.js",
   "scripts": {
-    "test": "mocha -R nyan"
+    "test": "mocha -R nyan test/**/*.test.js"
   },
   "repository": {
     "type": "git",
