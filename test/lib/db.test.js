@@ -74,6 +74,48 @@ describe('db', function () {
   });
 
   describe('game', function () {
-    
+    var ships = [['a1', 'b1'], ['d1', 'd2', 'd3']],
+        player;
+
+    beforeEach(function (done) {
+      db.setupPlayer('foo')
+        .then(function (playa) {
+          player = playa;
+          done();
+        });
+    });
+
+    it('should throw an error if the player does not exist', function (done) {
+      db.setupGame('foo')
+        .then(null, function (err) {
+          expect(err).to.be.an(Error);
+          done();
+        });
+    });
+
+    it('should create a game if there are none waiting to be started', function (done) {
+      db.setupGame(player.id, ships)
+        .then(function (game) {
+          expect(game.player1.toString()).to.be(player.id);
+          done();
+        });
+    });
+
+    it('should join the player to an existing game', function (done) {
+      db.setupGame(player.id, ships)
+        .then(function (game) {
+          db.setupGame(player.id, ships)
+            .then(function (game) {
+              expect(game.player2.toString()).to.be(player.id);
+              expect(game.started).to.be.a(Date);
+              expect(game.started).to.be.ok();
+              done();
+            });
+        });
+    });
+
+    xit('should create ships for a game', function () {
+      
+    });
   });
 });
