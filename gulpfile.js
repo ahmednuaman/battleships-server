@@ -10,12 +10,8 @@ gulp.task('lint', function () {
     'test/**/*.js',
     '*.js'
   ])
-    .pipe(jscs({
-      
-    }))
-    .pipe(jshint({
-
-    }));
+    .pipe(jscs())
+    .pipe(jshint());
 });
 
 gulp.task('test', [
@@ -34,4 +30,14 @@ gulp.task('test', [
         .pipe(istanbul.writeReports())
         .on('end', done);
     });
+});
+
+gulp.task('default', function () {
+  gulp.watch([
+    'lib/**/*.js',
+    'test/**/*.js',
+    '*.js'
+  ], [
+    'test'
+  ]);
 });
