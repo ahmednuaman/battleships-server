@@ -1,5 +1,5 @@
 var _ = require('lodash'),
-    db = require('lib/db');
+    db = require('lib/db'),
     expect = require('expect.js'),
     mockgoose = require('mockgoose'),
     mongoose = require('mongoose'),
