@@ -74,7 +74,10 @@ describe('db', function () {
   });
 
   describe('game', function () {
-    var ships = [['a1', 'b1'], ['d1', 'd2', 'd3']],
+    var ships = {
+          a: ['a1', 'b1'], 
+          b: ['d1', 'd2', 'd3']
+        },
         player;
 
     beforeEach(function (done) {
