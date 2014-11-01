@@ -18,3 +18,6 @@
     - mongodb-org
     - nodejs
     - npm
+  - name: Install local NPM dependencies
+    sudo: no
+    npm: path=/home/vagrant/battleships-server state=present
