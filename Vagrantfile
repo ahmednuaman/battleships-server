@@ -11,7 +11,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.synced_folder './', '/home/vagrant/battleships-server'
 
   config.vm.provision 'ansible' do |ansible|
-    ansible.playbook = 'playbook.yml'
+    ansible.playbook = 'playbook-provision.yml'
     ansible.verbose = 'vvvv'
   end
 end
