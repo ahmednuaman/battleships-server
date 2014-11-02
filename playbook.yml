@@ -1,23 +1,31 @@
 ---
 - hosts: all
-  tasks:
+  pre_tasks:
   - name: Add repo key
     sudo: yes
     apt_key: keyserver=keyserver.ubuntu.com id=7F0CEB10 state=present
+
   - name: Add repo URL
     sudo: yes
     apt_repository: repo='deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' state=present
+
   - name: Update apt
     sudo: yes
     apt: update_cache=yes cache_valid_time=3600
+
   - name: Install dependencies
     sudo: yes
     apt: name={{ item }} state=present
     with_items:
     - git
+    - curl
+    - build-essential
+    - libssl-dev
     - mongodb-org
-    - nodejs
-    - npm
+
+  roles:
+  - { role: ahmednuaman.nvm-ahmed, tags: nvm, sudo: yes }
+
+  tasks:
   - name: Install local NPM dependencies
-    sudo: no
     npm: path=/home/vagrant/battleships-server state=present
