@@ -1,18 +1,33 @@
 ---
 - hosts: all
-  vars:
-    user: vagrant
   roles:
     - { role: debops.nodejs, sudo: yes }
     - { role: lesmyrmidons.mongodb, sudo: yes }
-    - { role: hnakamur.oh-my-zsh, oh_my_zsh_theme: muse }
+
   pre_tasks:
-    - name: Install git
+    - name: Install git and zsh
       sudo: yes
-      apt: name=git update_cache=yes state=present
-  post_tasks:
+      apt: name={{ item }} update_cache=yes state=present
+      with_items:
+      - git
+      - zsh
+
     - name: Change vagrant user's shell to zsh
-      command: chsh -s /bin/zsh vagrant
+      user: name=vagrant shell=/usr/bin/zsh
       sudo: yes
+
+  post_tasks:
     - name: Install project node modules
       npm: global=no path=/home/vagrant/battleships-server
+
+    - name: Create data directory for mongodb
+      file: path=/home/vagrant/mongodb-data state=directory
+
+    - name: Clone ohmyzsh
+      git: repo=git://github.com/robbyrussell/oh-my-zsh.git dest=/home/vagrant/.oh-my-zsh accept_hostkey=yes depth=1
+
+    - name: Add ~/.zshrc
+      command: cp /home/vagrant/.oh-my-zsh/templates/zshrc.zsh-template /home/vagrant/.zshrc
+
+    - name: Change ohmyzsh theme to muse
+      replace: dest=/home/vagrant/.zshrc regexp='robbyrussell' replace='muse'

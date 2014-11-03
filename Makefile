@@ -1,7 +1,7 @@
-install: ansible-galaxy vagrant
+install: ansible-galaxy vagrant-up
 
 ansible-galaxy:
 		ansible-galaxy install -r requirements.txt -f
 
-vagrant:
+vagrant-up:
 		vagrant up
