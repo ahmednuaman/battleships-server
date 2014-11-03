@@ -1,0 +1,18 @@
+---
+- hosts: all
+  vars:
+    user: vagrant
+  roles:
+    - { role: debops.nodejs, sudo: yes }
+    - { role: lesmyrmidons.mongodb, sudo: yes }
+    - { role: hnakamur.oh-my-zsh, oh_my_zsh_theme: muse }
+  pre_tasks:
+    - name: Install git
+      sudo: yes
+      apt: name=git update_cache=yes state=present
+  post_tasks:
+    - name: Change vagrant user's shell to zsh
+      command: chsh -s /bin/zsh vagrant
+      sudo: yes
+    - name: Install project node modules
+      npm: global=no path=/home/vagrant/battleships-server

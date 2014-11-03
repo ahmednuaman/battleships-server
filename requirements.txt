@@ -1,0 +1,3 @@
+debops.nodejs
+hnakamur.oh-my-zsh
+lesmyrmidons.mongodb
