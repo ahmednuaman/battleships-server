@@ -131,9 +131,51 @@ describe('db', function () {
             });
         });
     });
+  });
 
-    xit('should create ships for a game', function () {
-      
+  describe('shot', function () {
+    var ships = {
+          a: ['a1', 'b1'], 
+          b: ['d1', 'd2', 'd3']
+        },
+        game,
+        player1, 
+        player2;
+
+    beforeEach(function (done) {
+      db.setupPlayer('foo')
+        .then(function (player) {
+          player1 = player;
+
+          db.setupGame(player.id, ships)
+            .then(function () {
+              db.setupPlayer('foo2')
+                .then(function (player) {
+                  player2 = player;
+                  
+                  db.setupGame(player.id, ships)
+                    .then(function (g) {
+                      game = g;
+                      done();
+                    });
+                });
+            });
+        });
+    });
+
+    it('should let player1 have first shot', function (done) {
+      db.handleShot(player2.id, game.id, 'x1')
+        .then(null, function (err) {
+          expect(err).to.contain('not your turn');
+
+          db.handleShot(player1.id, game.id, 'x1')
+            .then(function (response) {
+              expect(response.hit).not.to.be.ok();
+              expect(response.sunk).not.to.be.ok();
+              expect(response.win).not.to.be.ok();
+              done();
+            });
+        });
     });
   });
 });
