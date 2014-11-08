@@ -104,15 +104,30 @@ describe('db', function () {
         });
     });
 
-    it('should join the player to an existing game', function (done) {
+    it('should not allow the same player to join more than one game', function (done) {
       db.setupGame(player.id, ships)
         .then(function (game) {
           db.setupGame(player.id, ships)
-            .then(function (game) {
-              expect(game.player2.toString()).to.be(player.id);
-              expect(game.started).to.be.a(Date);
-              expect(game.started).to.be.ok();
+            .then(null, function (err) {
+              expect(err).to.contain('one game at the same time');
               done();
+            });
+        });
+    });
+
+    it('should join the player to an exisiting game', function (done) {
+      db.setupGame(player.id, ships)
+        .then(function (game) {
+          db.setupPlayer('foo2')
+            .then(function (playa) {
+              db.setupGame(playa.id, ships)
+                .then(function (game) {
+                  expect(game.player1.toString()).to.be(player.id);
+                  expect(game.player2.toString()).to.be(playa.id);
+                  expect(game.started).to.be.a(Date);
+                  expect(game.started).to.be.ok();
+                  done();
+                });
             });
         });
     });
