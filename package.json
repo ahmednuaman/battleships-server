@@ -4,7 +4,8 @@
   "description": "A simple battleships server written in NodeJS and MongoDB",
   "main": "server.js",
   "scripts": {
-    "test": "gulp test"
+    "test": "gulp test",
+    "ci": "istanbul cover _mocha -- -R spec test/**/*"
   },
   "repository": {
     "type": "git",
