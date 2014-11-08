@@ -135,7 +135,7 @@ describe('db', function () {
 
   describe('shot', function () {
     var ships = {
-          a: ['a1', 'b1'], 
+          a: ['a1', 'a2'], 
           b: ['d1']
         },
         game,
@@ -198,7 +198,7 @@ describe('db', function () {
             .then(function (response) {
               expect(response.hit).not.to.be.ok();
               expect(response.sunk).not.to.be.ok();
-              expect(response.win).not.to.be.ok();
+              expect(response.won).not.to.be.ok();
               done();
             });
         });
@@ -209,7 +209,7 @@ describe('db', function () {
         .then(function (response) {
           expect(response.hit).to.be('a');
           expect(response.sunk).not.to.be.ok();
-          expect(response.win).not.to.be.ok();
+          expect(response.won).not.to.be.ok();
           done();
         });
     });
@@ -219,8 +219,35 @@ describe('db', function () {
         .then(function (response) {
           expect(response.hit).to.be('b');
           expect(response.sunk).to.be('b');
-          expect(response.win).not.to.be.ok();
+          expect(response.won).not.to.be.ok();
           done();
+        });
+    });
+
+    it('should register a winning hit and end the game', function (done) {
+      db.handleShot(player1.id, game.id, 'a1')
+        .then(function (response) {
+          db.handleShot(player2.id, game.id, 'a1')
+            .then(function (response) {
+              db.handleShot(player1.id, game.id, 'a2')
+                .then(function (response) {
+                  db.handleShot(player2.id, game.id, 'a2')
+                    .then(function (response) {
+                      db.handleShot(player1.id, game.id, 'd1')
+                        .then(function (response) {
+                          expect(response.hit).to.be('b');
+                          expect(response.sunk).to.be('b');
+                          expect(response.won).to.be.ok();
+
+                          db.handleShot(player2.id, game.id, 'd1')
+                            .then(null, function (err) {
+                              expect(err).to.contain('No game found');
+                              done();
+                            });
+                        });
+                    });
+                });
+            });
         });
     });
   });
