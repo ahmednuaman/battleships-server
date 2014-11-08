@@ -2,7 +2,7 @@
 
 A simple battleships server written in NodeJS and MongoDB
 
-[![Build Status](https://travis-ci.org/ahmednuaman/battleships-server.svg?branch=master)](https://travis-ci.org/ahmednuaman/battleships-server) [![Code Climate](https://codeclimate.com/github/ahmednuaman/battleships-server/badges/gpa.svg)](https://codeclimate.com/github/ahmednuaman/battleships-server) [![Code Climate](https://codeclimate.com/github/ahmednuaman/battleships-server/badges/gpa.svg)](https://codeclimate.com/github/ahmednuaman/battleships-server)
+[![Build Status](https://travis-ci.org/ahmednuaman/battleships-server.svg?branch=master)](https://travis-ci.org/ahmednuaman/battleships-server) [![Code Climate](https://codeclimate.com/github/ahmednuaman/battleships-server/badges/gpa.svg)](https://codeclimate.com/github/ahmednuaman/battleships-server) [![Test Coverage](https://codeclimate.com/github/ahmednuaman/battleships-server/badges/coverage.svg)](https://codeclimate.com/github/ahmednuaman/battleships-server)
 
 ## How to set up
 1. Download and install [Vagrant](https://www.vagrantup.com/) and [Ansible](http://www.ansible.com/home)
