@@ -136,7 +136,7 @@ describe('db', function () {
   describe('shot', function () {
     var ships = {
           a: ['a1', 'b1'], 
-          b: ['d1', 'd2', 'd3']
+          b: ['d1']
         },
         game,
         player1, 
@@ -163,6 +163,32 @@ describe('db', function () {
         });
     });
 
+    it('should throw an error if a game is not found', function (done) {
+      db.handleShot(null, null, 'foo')
+        .then(null, function (err) {
+          expect(err).to.contain('No game found');
+
+          db.handleShot('foo', null, 'foo')
+            .then(null, function (err) {
+              expect(err).to.be.an(Error);
+
+              db.handleShot(player1.id, 'foo', 'foo')
+                .then(null, function (err) {
+                  expect(err).to.be.an(Error);
+                  done();
+                });
+            });
+        });
+    });
+
+    it('should require coords', function (done) {
+      db.handleShot(player1.id, game.id)
+        .then(null, function (err) {
+          expect(err).to.contain('No coord sent');
+          done();
+        });
+    });
+
     it('should let player1 have first shot', function (done) {
       db.handleShot(player2.id, game.id, 'x1')
         .then(null, function (err) {
@@ -175,6 +201,26 @@ describe('db', function () {
               expect(response.win).not.to.be.ok();
               done();
             });
+        });
+    });
+
+    it('should register a hit', function (done) {
+      db.handleShot(player1.id, game.id, 'a1')
+        .then(function (response) {
+          expect(response.hit).to.be('a');
+          expect(response.sunk).not.to.be.ok();
+          expect(response.win).not.to.be.ok();
+          done();
+        });
+    });
+
+    it('should register a sunk ship', function (done) {
+      db.handleShot(player1.id, game.id, 'd1')
+        .then(function (response) {
+          expect(response.hit).to.be('b');
+          expect(response.sunk).to.be('b');
+          expect(response.win).not.to.be.ok();
+          done();
         });
     });
   });
