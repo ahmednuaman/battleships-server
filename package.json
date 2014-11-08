@@ -4,6 +4,7 @@
   "description": "A simple battleships server written in NodeJS and MongoDB",
   "main": "server.js",
   "scripts": {
+    "codeclimate": "CODECLIMATE_REPO_TOKEN=165a00d71f0c816291cee594bd8d0611045084afb3bdeba54cea34e539672667 codeclimate < coverage/lcov.info",
     "test": "grunt test"
   },
   "repository": {
@@ -20,6 +21,7 @@
   },
   "homepage": "https://github.com/ahmednuaman/battleships-server",
   "devDependencies": {
+    "codeclimate-test-reporter": "0.0.4",
     "expect.js": "^0.3.1",
     "grunt": "^0.4.5",
     "grunt-contrib-jshint": "^0.10.0",

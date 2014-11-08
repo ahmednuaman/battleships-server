@@ -4,8 +4,4 @@ node_js:
 before_install: npm install -g grunt-cli
 install: npm install
 script: npm test
-after_script:
-  - cat coverage/lcov.info | codeclimate
-addons:
-  code_climate:
-    repo_token: 165a00d71f0c816291cee594bd8d0611045084afb3bdeba54cea34e539672667
+after_script: npm run codeclimate
