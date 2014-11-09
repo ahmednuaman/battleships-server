@@ -65,9 +65,9 @@ describe('db', function () {
     });
 
     it('should throw an error if the user is not found', function (done) {
-      db.setupPlayer('foo', 'foo')
+      db.setupPlayer('foo', mongoose.Types.ObjectId())
         .then(null, function (err) {
-          expect(err).to.be.an(Error);
+          expect(err).to.contain('Player not found');
           done();
         });
     });
@@ -164,20 +164,10 @@ describe('db', function () {
     });
 
     it('should throw an error if a game is not found', function (done) {
-      db.handleShot(null, null, 'foo')
+      db.handleShot(mongoose.Types.ObjectId(), mongoose.Types.ObjectId(), 'foo')
         .then(null, function (err) {
           expect(err).to.contain('No game found');
-
-          db.handleShot('foo', null, 'foo')
-            .then(null, function (err) {
-              expect(err).to.be.an(Error);
-
-              db.handleShot(player1.id, 'foo', 'foo')
-                .then(null, function (err) {
-                  expect(err).to.be.an(Error);
-                  done();
-                });
-            });
+          done();
         });
     });
 
@@ -247,6 +237,26 @@ describe('db', function () {
                         });
                     });
                 });
+            });
+        });
+    });
+  });
+
+  describe('listeners', function () {
+    it('should return a query for each listener', function (done) {
+      db.setupPlayer('foo')
+        .then(function (player) {
+          player1 = player;
+
+          db.setupGame(player.id, {
+            a: ['a1', 'a2'], 
+            b: ['d1']
+          })
+            .then(function (game) {
+              _.forEach(['addShotsListener', 'addGameListener'], function (method) {
+                expect(db[method](player.id, game.id)).to.be.a(mongoose.Query);                
+              });
+              done();   
             });
         });
     });
