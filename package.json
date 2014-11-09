@@ -31,12 +31,12 @@
     "istanbul": "^0.3.2",
     "mocha": "^2.0.1",
     "mockgoose": "^1.10.7",
-    "sinon": "^1.11.0"
+    "sinon": "^1.11.1"
   },
   "dependencies": {
     "lodash": "^2.4.1",
     "mongoose": "^3.8.18",
     "q": "^1.0.1",
-    "socket.io": "^1.1.0"
+    "socket.io": "^1.2.0"
   }
 }
