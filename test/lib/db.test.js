@@ -253,7 +253,7 @@ describe('db', function () {
             b: ['d1']
           })
             .then(function (game) {
-              _.forEach(['addShotsListener', 'addGameListener'], function (method) {
+              _.forEach(['addShipListener', 'addGameListener'], function (method) {
                 expect(db[method](player.id, game.id)).to.be.a(mongoose.Query);                
               });
               done();   
