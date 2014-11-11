@@ -24,6 +24,10 @@ describe('handler', function () {
         socket = sinon.stub(),
         handler;
 
+    apiStub.returns({
+      init: sinon.stub()
+    });
+
     ioStub.returns({
       on: function (event, callback) {
         expect(event).to.be('connection');
