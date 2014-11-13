@@ -5,15 +5,20 @@ var _ = require('lodash'),
 
 describe('api', function () {
   var API,
+      api,
       db,
       promiseStub,
       socket;
 
-  promiseStub = function () {
-    return sinon.stub()
+  promiseStub = function (target, method) {
+    var then = sinon.spy();
+
+    target[method] = sinon.stub()
       .returns({
-        then: sinon.spy()
+        then: then
       });
+
+    return then;
   };
 
   beforeEach(function () {
@@ -27,18 +32,15 @@ describe('api', function () {
 
     API = require('../../lib/api');
     db = {
-      init: promiseStub(),
-      setupPlayer: promiseStub(),
-      setupGame: promiseStub(),
-      handleShot: promiseStub(),
-      addShipListener: sinon.stub(),
-      addGameListener: sinon.stub()
+      init: null
     };
     socket = {
       emit: sinon.stub(),
       close: sinon.stub(),
       on: sinon.stub()
     };
+
+    api = new API(socket, db);
   });
 
   afterEach(function () {
@@ -46,17 +48,27 @@ describe('api', function () {
   });
 
   it('should construct a new API', function () {
-    var api = new API(socket, db);
-
     expect(api.dbMock).to.be(db);
     expect(api.socket).to.be(socket);
   });
 
   it('should connect to the db', function () {
-    var api = new API(socket, db);
+    var then = promiseStub(db, 'init');
 
     api.init();
     expect(socket.emit.calledWith('info', 'Let the battle commence!')).to.be.ok();
     expect(socket.emit.calledWith('info', 'Connecting to DB')).to.be.ok();
+    expect(then.called).to.be.ok();
+  });
+
+  it('should handle errors', function () {
+    var err = 'foo';
+
+    api.handleDBError();
+    expect(socket.emit.calledWith('error', 'Failed to connect to DB')).to.be.ok();
+    expect(socket.close.called).to.be.ok();
+
+    api.handleError(err);
+    expect(socket.emit.calledWith('error', err)).to.be.ok();
   });
 });
