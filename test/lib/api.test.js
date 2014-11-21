@@ -79,4 +79,10 @@ describe('api', function () {
     expect(socket.emit.calledWith('info', 'Successfully connected to DB')).to.be.ok();
     expect(api.addPlayerListeners.called).to.be.ok();
   });
+
+  it('should listen for new players', function () {
+    api.addPlayerListeners();
+    expect(socket.emit.calledWith('info', sinon.match('Please tell me who you are'))).to.be.ok();
+    expect(socket.on.calledWith('setupPlayer', sinon.match.func)).to.be.ok();
+  });
 });
