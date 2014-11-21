@@ -7,16 +7,16 @@ describe('api', function () {
   var API,
       api,
       db,
+      dbThen,
       promiseStub,
       socket;
 
   promiseStub = function (target, method) {
     var then = sinon.spy();
 
-    target[method] = sinon.stub()
-      .returns({
-        then: then
-      });
+    target[method].returns({
+      then: then
+    });
 
     return then;
   };
@@ -28,19 +28,20 @@ describe('api', function () {
       useCleanCache: true
     });
 
-    mockery.registerMock('./db', db);
-
-    API = require('../../lib/api');
     db = {
-      init: null
+      init: sinon.stub()
     };
+    dbThen = promiseStub(db, 'init');
     socket = {
       emit: sinon.stub(),
       close: sinon.stub(),
       on: sinon.stub()
     };
 
-    api = new API(socket, db);
+    mockery.registerMock('./db', db);
+
+    API = require('../../lib/api');
+    api = new API(socket, sinon.stub());
   });
 
   afterEach(function () {
@@ -48,17 +49,16 @@ describe('api', function () {
   });
 
   it('should construct a new API', function () {
-    expect(api.dbMock).to.be(db);
+    expect(api.dbMock).to.be.a(Function);
     expect(api.socket).to.be(socket);
   });
 
   it('should connect to the db', function () {
-    var then = promiseStub(db, 'init');
-
     api.init();
     expect(socket.emit.calledWith('info', 'Let the battle commence!')).to.be.ok();
     expect(socket.emit.calledWith('info', 'Connecting to DB')).to.be.ok();
-    expect(then.called).to.be.ok();
+    expect(dbThen.called).to.be.ok();
+    expect(dbThen.alwaysCalledWithMatch(Function, Function)).to.be.ok();
   });
 
   it('should handle errors', function () {
@@ -70,5 +70,13 @@ describe('api', function () {
 
     api.handleError(err);
     expect(socket.emit.calledWith('error', err)).to.be.ok();
+  });
+
+  it('should handle db success', function () {
+    sinon.stub(api, 'addPlayerListeners');
+
+    api.handleDBSuccess();
+    expect(socket.emit.calledWith('info', 'Successfully connected to DB')).to.be.ok();
+    expect(api.addPlayerListeners.called).to.be.ok();
   });
 });
