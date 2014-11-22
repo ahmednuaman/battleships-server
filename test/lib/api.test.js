@@ -116,5 +116,24 @@ describe('api', function () {
       api.setupPlayer(data(new Array(27).join('a')));
       expect(socket.emit.calledWith('error', '`playerName` is invalid')).to.be.ok();
     });
+
+    it('should successfully setup a player', function () {
+      var playerName = 'foo',
+          playerId;
+
+      [1, 2].forEach(function () {
+        api.setupPlayer(data(playerName, playerId));
+        expect(db.setupPlayer.calledWith(playerName, playerId)).to.be.ok();
+        playerId = 'foo';
+      });
+    });
+
+    it('should handle player setup success', function () {
+      var playerId = '1';
+
+      api.setupPlayerSuccess(data('', playerId), {
+        id: playerId
+      });
+    });
   });
 });
