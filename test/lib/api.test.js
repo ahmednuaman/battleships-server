@@ -136,4 +136,36 @@ describe('api', function () {
       });
     });
   });
+
+  describe('game', function () {
+    var data = function (playerId, badShips) {
+      var ships;
+
+      if (!badShips) {
+        ships = [{
+          name: 'carrier',
+          coord: 'a1',
+          placement: 'v'
+        }];
+      } else {
+        ships = [{
+          name: 'carrier',
+          coord: 'a1',
+          placement: 'v'
+        }, {
+          name: 'carrier',
+          coord: 'a1',
+          placement: 'v'
+        }, {
+          name: 'carrier',
+          coord: 'a1',
+          placement: 'v'
+        }];
+      }
+    };
+
+    it('should set up a game', function (done) {
+
+    });
+  });
 });
