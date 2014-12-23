@@ -7,7 +7,7 @@ describe('api', function () {
   var API,
       api,
       db,
-      dbThen,
+      dbPromise,
       promiseStub,
       socket;
 
@@ -30,9 +30,13 @@ describe('api', function () {
 
     db = {
       init: sinon.stub(),
-      setupPlayer: sinon.stub()
+      setupPlayer: sinon.stub(),
+      setupGame: sinon.stub()
     };
-    dbThen = promiseStub(db, 'init');
+    dbPromise = {
+      init: promiseStub(db, 'init'),
+      setupGame: promiseStub(db, 'setupGame')
+    };
     socket = {
       emit: sinon.stub(),
       close: sinon.stub(),
@@ -60,8 +64,8 @@ describe('api', function () {
       api.init();
       expect(socket.emit.calledWith('info', 'Let the battle commence!')).to.be.ok();
       expect(socket.emit.calledWith('info', 'Connecting to DB')).to.be.ok();
-      expect(dbThen.called).to.be.ok();
-      expect(dbThen.alwaysCalledWithMatch(Function, Function)).to.be.ok();
+      expect(dbPromise.init.called).to.be.ok();
+      expect(dbPromise.init.alwaysCalledWithMatch(Function, Function)).to.be.ok();
     });
 
     it('should handle errors', function () {
@@ -138,34 +142,183 @@ describe('api', function () {
   });
 
   describe('game', function () {
-    var data = function (playerId, badShips) {
-      var ships;
+    var badDuplicateShips = [{
+          name: 'carrier',
+          coord: 'a1',
+          placement: 'h'
+        }, {
+          name: 'carrier',
+          coord: 'b1',
+          placement: 'h'
+        }, {
+          name: 'battleship',
+          coord: 'c1',
+          placement: 'h'
+        }, {
+          name: 'battleship',
+          coord: 'd1',
+          placement: 'h'
+        }, {
+          name: 'sub',
+          coord: 'e1',
+          placement: 'h'
+        }, {
+          name: 'sub',
+          coord: 'f1',
+          placement: 'h'
+        }, {
+          name: 'cruiser',
+          coord: 'g1',
+          placement: 'h'
+        }, {
+          name: 'patrol',
+          coord: 'i1',
+          placement: 'h'
+        }, {
+          name: 'patrol',
+          coord: 'j1',
+          placement: 'h'
+        }, {
+          name: 'patrol',
+          coord: 'j2',
+          placement: 'h'
+        }],
+        badOverlappingShips = [{
+          name: 'carrier',
+          coord: 'a1',
+          placement: 'h'
+        }, {
+          name: 'carrier',
+          coord: 'b1',
+          placement: 'h'
+        }, {
+          name: 'battleship',
+          coord: 'c1',
+          placement: 'h'
+        }, {
+          name: 'battleship',
+          coord: 'd1',
+          placement: 'h'
+        }, {
+          name: 'sub',
+          coord: 'e1',
+          placement: 'h'
+        }, {
+          name: 'sub',
+          coord: 'f1',
+          placement: 'h'
+        }, {
+          name: 'cruiser',
+          coord: 'g1',
+          placement: 'h'
+        }, {
+          name: 'cruiser',
+          coord: 'h1',
+          placement: 'h'
+        }, {
+          name: 'patrol',
+          coord: 'i1',
+          placement: 'h'
+        }, {
+          name: 'patrol',
+          coord: 'i1',
+          placement: 'h'
+        }],
+        badNumberShips = [{
+          name: 'carrier',
+          coord: 'a1',
+          placement: 'h'
+        }, {
+          name: 'carrier',
+          coord: 'b1',
+          placement: 'h'
+        }, {
+          name: 'battleship',
+          coord: 'c1',
+          placement: 'h'
+        }, {
+          name: 'battleship',
+          coord: 'd1',
+          placement: 'h'
+        }, {
+          name: 'sub',
+          coord: 'e1',
+          placement: 'h'
+        }, {
+          name: 'sub',
+          coord: 'f1',
+          placement: 'h'
+        }, {
+          name: 'cruiser',
+          coord: 'g1',
+          placement: 'h'
+        }, {
+          name: 'cruiser',
+          coord: 'h1',
+          placement: 'h'
+        }, {
+          name: 'patrol',
+          coord: 'i1',
+          placement: 'h'
+        }],
+        goodShips = [{
+          name: 'carrier',
+          coord: 'a1',
+          placement: 'h'
+        }, {
+          name: 'carrier',
+          coord: 'b1',
+          placement: 'h'
+        }, {
+          name: 'battleship',
+          coord: 'c1',
+          placement: 'h'
+        }, {
+          name: 'battleship',
+          coord: 'd1',
+          placement: 'h'
+        }, {
+          name: 'sub',
+          coord: 'e1',
+          placement: 'h'
+        }, {
+          name: 'sub',
+          coord: 'f1',
+          placement: 'h'
+        }, {
+          name: 'cruiser',
+          coord: 'g1',
+          placement: 'h'
+        }, {
+          name: 'cruiser',
+          coord: 'h1',
+          placement: 'h'
+        }, {
+          name: 'patrol',
+          coord: 'i1',
+          placement: 'h'
+        }, {
+          name: 'patrol',
+          coord: 'j1',
+          placement: 'h'
+        }],
+        playerId = '1',
+        func;
 
-      if (!badShips) {
-        ships = [{
-          name: 'carrier',
-          coord: 'a1',
-          placement: 'v'
-        }];
-      } else {
-        ships = [{
-          name: 'carrier',
-          coord: 'a1',
-          placement: 'v'
-        }, {
-          name: 'carrier',
-          coord: 'a1',
-          placement: 'v'
-        }, {
-          name: 'carrier',
-          coord: 'a1',
-          placement: 'v'
-        }];
-      }
+    func = function (ships) {
+      return {
+        playerId: playerId,
+        ships: ships
+      };
     };
 
-    it('should set up a game', function (done) {
+    it('should set up a game', function () {
+      api.setupPlayerSuccess({}, {
+        id: playerId
+      });
+      api.setupGame(func(goodShips));
 
+      expect(dbPromise.setupGame.called).to.be.ok();
     });
   });
 });
