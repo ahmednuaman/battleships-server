@@ -261,6 +261,129 @@ describe('api', function () {
           coord: 'i1',
           placement: 'h'
         }],
+        badTypeOfShip = [{
+          name: 'woop',
+          coord: 'a1',
+          placement: 'h'
+        }, {
+          name: 'carrier',
+          coord: 'b1',
+          placement: 'h'
+        }, {
+          name: 'battleship',
+          coord: 'c1',
+          placement: 'h'
+        }, {
+          name: 'battleship',
+          coord: 'd1',
+          placement: 'h'
+        }, {
+          name: 'sub',
+          coord: 'e1',
+          placement: 'h'
+        }, {
+          name: 'sub',
+          coord: 'f1',
+          placement: 'h'
+        }, {
+          name: 'cruiser',
+          coord: 'g1',
+          placement: 'h'
+        }, {
+          name: 'cruiser',
+          coord: 'h1',
+          placement: 'h'
+        }, {
+          name: 'patrol',
+          coord: 'i1',
+          placement: 'h'
+        }, {
+          name: 'patrol',
+          coord: 'j1',
+          placement: 'h'
+        }],
+        badXCoordOfShip = [{
+          name: 'carrier',
+          coord: 'z1',
+          placement: 'h'
+        }, {
+          name: 'carrier',
+          coord: 'b1',
+          placement: 'h'
+        }, {
+          name: 'battleship',
+          coord: 'c1',
+          placement: 'h'
+        }, {
+          name: 'battleship',
+          coord: 'd1',
+          placement: 'h'
+        }, {
+          name: 'sub',
+          coord: 'e1',
+          placement: 'h'
+        }, {
+          name: 'sub',
+          coord: 'f1',
+          placement: 'h'
+        }, {
+          name: 'cruiser',
+          coord: 'g1',
+          placement: 'h'
+        }, {
+          name: 'cruiser',
+          coord: 'h1',
+          placement: 'h'
+        }, {
+          name: 'patrol',
+          coord: 'i1',
+          placement: 'h'
+        }, {
+          name: 'patrol',
+          coord: 'j1',
+          placement: 'h'
+        }],
+        badYCoordOfShip = [{
+          name: 'carrier',
+          coord: 'a50',
+          placement: 'h'
+        }, {
+          name: 'carrier',
+          coord: 'b1',
+          placement: 'h'
+        }, {
+          name: 'battleship',
+          coord: 'c1',
+          placement: 'h'
+        }, {
+          name: 'battleship',
+          coord: 'd1',
+          placement: 'h'
+        }, {
+          name: 'sub',
+          coord: 'e1',
+          placement: 'h'
+        }, {
+          name: 'sub',
+          coord: 'f1',
+          placement: 'h'
+        }, {
+          name: 'cruiser',
+          coord: 'g1',
+          placement: 'h'
+        }, {
+          name: 'cruiser',
+          coord: 'h1',
+          placement: 'h'
+        }, {
+          name: 'patrol',
+          coord: 'i1',
+          placement: 'h'
+        }, {
+          name: 'patrol',
+          coord: 'j1',
+          placement: 'h'
+        }],
         goodShips = [{
           name: 'carrier',
           coord: 'a1',
@@ -319,6 +442,55 @@ describe('api', function () {
       api.setupGame(func(goodShips));
 
       expect(dbPromise.setupGame.called).to.be.ok();
+    });
+
+    it('should complain about duplicate ships', function () {
+      api.setupPlayerSuccess({}, {
+        id: playerId
+      });
+      api.setupGame(func(badDuplicateShips));
+
+      expect(socket.emit.calledWith('error', 'Too many `ships` of type: patrol')).to.be.ok();
+    });
+
+    it('should complain about overlapping ships', function () {
+      api.setupPlayerSuccess({}, {
+        id: playerId
+      });
+      api.setupGame(func(badOverlappingShips));
+
+      expect(socket.emit.calledWith('error', '`ships` overlap')).to.be.ok();
+    });
+
+    it('should complain about an incorrect number of ships', function () {
+      api.setupPlayerSuccess({}, {
+        id: playerId
+      });
+      api.setupGame(func(badNumberShips));
+
+      expect(socket.emit.calledWith('error', 'The number of `ships` must be 10')).to.be.ok();
+    });
+
+    it('should complain about an incorrect type of ship', function () {
+      api.setupPlayerSuccess({}, {
+        id: playerId
+      });
+      api.setupGame(func(badTypeOfShip));
+
+      expect(socket.emit.calledWith('error', '`ship` is incorrect: woop')).to.be.ok();
+    });
+
+    it('should complain about an incorrect X/Y coords of ships', function () {
+      api.setupPlayerSuccess({}, {
+        id: playerId
+      });
+      api.setupGame(func(badXCoordOfShip));
+
+      expect(socket.emit.calledWith('error', '`ship` X coords are incorrect: carrier')).to.be.ok();
+
+      api.setupGame(func(badYCoordOfShip));
+
+      expect(socket.emit.calledWith('error', '`ship` Y coords are incorrect: carrier')).to.be.ok();
     });
   });
 });
